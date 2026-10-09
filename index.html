@@ -133,7 +133,7 @@ textarea{resize:vertical;min-height:96px;line-height:1.55}
 .inv{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;font-size:11px;color:var(--ink-dim);text-align:center}
 .inv b{display:block;font:500 15px/1.2 var(--f-mono);color:var(--ink);font-variant-numeric:tabular-nums}
 .inv-note{margin:-2px 0 0;font-size:10.5px;color:var(--ink-dim);text-align:center}
-#phase{display:grid;justify-items:center;gap:6px;min-width:210px;max-width:300px}
+#phase{display:grid;justify-items:center;gap:6px;width:220px}
 .ph-label{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--brass);text-align:center}
 .ph-time{font:400 30px/1 var(--f-display);font-variant-numeric:tabular-nums}
 .castles{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
@@ -153,7 +153,7 @@ textarea{resize:vertical;min-height:96px;line-height:1.55}
 #right>*{pointer-events:auto}
 #mini{width:176px;height:112px;border-radius:10px;border:1px solid var(--line);display:block;background:var(--panel)}
 .iconbtns{display:flex;gap:6px}
-#toasts{position:absolute;top:calc(env(safe-area-inset-top,0px) + 150px);left:50%;transform:translateX(-50%);display:grid;gap:6px;justify-items:center;width:min(440px,calc(100% - 32px));pointer-events:none}
+#toasts{position:absolute;top:calc(env(safe-area-inset-top,0px) + 14px);left:50%;transform:translateX(-50%);display:grid;gap:6px;justify-items:center;width:min(440px,calc(100% - 32px));pointer-events:none}
 .toast{padding:8px 14px;border-radius:999px;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);font-size:14px;font-weight:600;text-align:center;animation:pop .25s ease-out}
 .toast.good{border-color:var(--ok)}
 .toast.bad{border-color:var(--danger)}
@@ -184,17 +184,17 @@ body.touch #weapons{bottom:calc(env(safe-area-inset-bottom,0px) + 156px)}
 body.touch #prompt{bottom:calc(env(safe-area-inset-bottom,0px) + 236px)}
 body.touch #log{display:none}
 @media (max-width:700px){
-  .hud-top{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"status right" "phase phase";gap:8px}
-  #status{grid-area:status;width:auto;max-width:230px;padding:8px 10px}
-  #right{grid-area:right}
-  #phase{grid-area:phase;justify-self:center;min-width:0;width:min(100%,360px);grid-template-columns:auto 1fr;justify-items:stretch;align-items:center;padding:7px 10px;gap:4px 10px}
-  #phase .ph-label{grid-column:1;text-align:left}
-  #phase .ph-time{grid-column:1;font-size:22px}
-  #phase .castles,#phase .roster,#phase .goals{grid-column:2;grid-row:1 / span 2}
+  .hud-top{gap:8px}
+  #status{flex:1 1 auto;width:auto;min-width:0;max-width:210px;padding:8px 10px}
+  #right{flex:none}
+  #phase{width:168px;padding:7px 9px;gap:4px}
+  #phase .ph-time{font-size:22px}
   #phase .roster{display:none}
-  #phase #bReady{grid-column:1 / -1;min-height:30px}
+  #phase .castles{grid-template-columns:1fr;gap:4px}
+  #phase #bReady{min-height:30px;font-size:12px;padding:0 6px}
+  #phase .goals{font-size:11px}
   #mini{display:none}
-  #toasts{top:calc(env(safe-area-inset-top,0px) + 215px)}
+  #toasts{top:calc(env(safe-area-inset-top,0px) + 190px)}
   .wslot{width:48px;min-height:54px}
   .wslot canvas{width:22px;height:22px}
   .wslot .wn{font-size:11px}
@@ -280,6 +280,7 @@ sup,sub{font-size:.68em;line-height:0}
         <div class="inv"><span>나무<b id="iWood">0</b></span><span>돌<b id="iStone">0</b></span><span>식량<b id="iFood">0</b></span><span>물<b id="iWater">0</b></span></div>
         <p class="inv-note" id="invNote">팀 창고</p>
       </section>
+      <div id="right">
       <section id="phase" class="card" aria-live="off">
         <div class="ph-label" id="phLabel">준비 시간</div>
         <div class="ph-time" id="phTime">5:00</div>
@@ -291,7 +292,6 @@ sup,sub{font-size:.68em;line-height:0}
         <button id="bReady" class="btn sm primary" type="button" hidden>준비 완료 · 바로 전투</button>
         <ol class="goals" id="goals" hidden></ol>
       </section>
-      <div id="right">
         <canvas id="mini" width="176" height="112" aria-label="미니맵"></canvas>
         <div class="iconbtns">
           <button class="btn sm" id="bCraft" type="button">제작 <kbd>B</kbd></button>
@@ -2244,7 +2244,7 @@ function updateHud(force) {
   const st = G.teams[p.team].st;
   $('#iWood').textContent = st.wood; $('#iStone').textContent = st.stone; $('#iFood').textContent = st.food; $('#iWater').textContent = st.water;
   if (G.mode === 'battle') {
-    const lab = G.phase === 'prep' ? '준비 시간 · 채집과 건설' : G.phase === 'battle' ? '전투 · 상대 성을 무너뜨리세요' : '경기 종료';
+    const lab = G.phase === 'prep' ? '준비 시간' : G.phase === 'battle' ? '전투 중' : '경기 종료';
     $('#phLabel').textContent = lab;
     $('#phTime').textContent = fmtT(G.phase === 'prep' ? G.prepLeft : G.battleLeft);
     ['blue', 'orange'].forEach((t, i) => { const k = G.teams[t].keep; $('#cBar' + i).style.width = (k.alive ? k.hp / k.maxHp * 100 : 0) + '%'; });
