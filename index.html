@@ -354,6 +354,7 @@ sup,sub{font-size:.68em;line-height:0}
 .abtn.ready{border-color:var(--brass);box-shadow:0 0 0 3px rgba(231,194,91,.35),0 0 18px rgba(231,194,91,.55);animation:glow 1s ease-in-out infinite alternate}
 @keyframes glow{to{box-shadow:0 0 0 5px rgba(231,194,91,.2),0 0 26px rgba(231,194,91,.8)}}
 body.touch #abil{display:none}
+@media (max-width:1180px){#abil{bottom:calc(env(safe-area-inset-bottom,0px) + 92px);gap:8px}.abtn{width:66px;height:66px}}
 .tbtn.sk,.tbtn.su{--cd:0;--g:0;position:relative;overflow:hidden}
 .tbtn.sk::after{content:attr(data-t);position:absolute;inset:0;display:grid;place-items:center;border-radius:50%;font-size:15px;background:conic-gradient(rgba(5,10,9,.72) calc(var(--cd) * 360deg),transparent 0)}
 .tbtn.su{border-color:#8a6a2a}
@@ -419,7 +420,8 @@ body.touch #abil{display:none}
     <ol id="log" aria-label="탐험 기록"></ol>
     <div id="weapons" role="toolbar" aria-label="무기 선택"></div>
     <div id="abil">
-      <button class="abtn" id="aSkill" type="button"><kbd>Q</kbd><span class="an">스킬</span></button>
+      <button class="abtn" id="aSkill" type="button"><kbd>Q</kbd><span class="an">기술 1</span></button>
+      <button class="abtn" id="aSkill2" type="button"><kbd>C</kbd><span class="an">기술 2</span></button>
       <button class="abtn sup" id="aSuper" type="button"><kbd>R</kbd><span class="an">필살기</span></button>
     </div>
     <div id="touch" hidden>
@@ -428,9 +430,9 @@ body.touch #abil{display:none}
         <button class="tbtn" data-act="eat" type="button">먹기</button>
         <button class="tbtn" data-act="drink" type="button" id="tDrink">마시기</button>
         <button class="tbtn" data-act="craft" type="button">제작</button>
-        <button class="tbtn" data-act="cycle" type="button">무기</button>
         <button class="tbtn alt" data-act="interact" type="button">채집</button>
-        <button class="tbtn sk" data-act="skill" type="button" id="tSkill">스킬</button>
+        <button class="tbtn sk" data-act="skill" type="button" id="tSkill">기술1</button>
+        <button class="tbtn sk" data-act="skill2" type="button" id="tSkill2">기술2</button>
         <button class="tbtn su" data-act="super" type="button" id="tSuper">필살</button>
         <button class="tbtn hit" data-act="attack" type="button">공격</button>
       </div>
@@ -444,7 +446,7 @@ body.touch #abil{display:none}
         <p class="eyebrow">탐험 일지 · EXPEDITION 01</p>
         <h1 class="title">탐험의 <em>공식</em></h1>
         <p class="lede">영웅을 골라 문제를 풀며 자원을 모으고, 팀과 함께 성을 쌓아 상대 성을 무너뜨리세요. 이기면 코인과 랭크 점수를 받아 새 영웅을 사고 단계를 올립니다.</p>
-        <p class="formula"><span>정답 1개 = <b>자원 +2 · 필살기 +34%</b></span><span>승리 = <b>코인 +100 · RP +22</b></span><span>오답 = <b>체력 −8</b></span></p>
+        <p class="formula"><span>영웅마다 <b>고유 기술 2개 + 필살기</b></span><span>정답 1개 = <b>자원 +2 · 필살기 +34%</b></span><span>승리 = <b>코인 +100 · RP +22</b></span><span>오답 = <b>체력 −8</b></span></p>
         <div class="profile" aria-label="내 랭크와 코인">
           <canvas id="pfEmblem" width="112" height="112" aria-hidden="true"></canvas>
           <div class="pf-rank"><span class="pf-label">내 랭크 · 성 공략전</span><b id="pfTier">아이언 IV</b><i class="rpbar"><b id="pfBar"></b></i><small id="pfLp">0 / 100 RP</small></div>
@@ -594,7 +596,7 @@ body.touch #abil{display:none}
         <dt>이동</dt><dd>WASD · 방향키 · 화면 왼쪽 조이스틱</dd>
         <dt>채집 <kbd>E</kbd></dt><dd>나무·바위·열매·물가에 다가가 문제를 풀면 자원 +2 (돌도끼가 있으면 나무·돌 +3)</dd>
         <dt>공격 <kbd>F</kbd> <kbd>Space</kbd></dt><dd>가까운 적을 자동으로 노립니다. 무기는 문제를 맞혀 충전하고, 충전 횟수만큼 공격합니다. 주먹은 충전이 필요 없어요.</dd>
-        <dt>스킬 <kbd>Q</kbd></dt><dd>영웅마다 다른 기술. 쓰고 나면 몇 초 기다려야 다시 쓸 수 있어요.</dd>
+        <dt>기술 1 <kbd>Q</kbd> · 기술 2 <kbd>C</kbd></dt><dd>영웅마다 고유 기술이 2개씩 있어요. 쓰고 나면 몇 초 기다려야 다시 쓸 수 있어요. 휴대폰에서는 무기 칸을 눌러 무기를 바꿉니다.</dd>
         <dt>필살기 <kbd>R</kbd></dt><dd>적을 맞히거나 문제를 맞히면(정답 1개 +34%) 게이지가 차고, 가득 차면 강력한 기술을 씁니다.</dd>
         <dt>무기 <kbd>1</kbd>–<kbd>7</kbd> <kbd>X</kbd></dt><dd>주먹 · 나무 검 · 돌도끼 · 창 · 활 · 망치 · 물풍선. 영웅마다 기본 무기를 들고 시작해요.</dd>
         <dt>제작 <kbd>B</kbd></dt><dd>무기 만들기, 성벽·망루 짓기, 본관 강화, 쉼터·모닥불 짓기</dd>
@@ -2577,26 +2579,32 @@ const HEROES = {
   haram: { name: '하람', title: '바람 검객', role: '전사', hp: 120, speed: 158, r: 12, weapon: 'sword', price: 0, diff: 2,
     passive: '근접 무기 피해 +15%',
     skill: { id: 'dash', name: '질풍 베기', cd: 6, desc: '앞으로 빠르게 베며 지나가 길 위의 적에게 피해 18' },
+    skill2: { id: 'wind', name: '칼바람', cd: 7, desc: '꿰뚫는 바람 칼날을 날려 길 위의 모든 적에게 피해 15' },
     sup: { id: 'whirl', name: '회오리 칼날', desc: '2.5초 동안 회전하며 주변 적에게 초당 피해 24 · 이동 속도 +20%' } },
   byeol: { name: '별이', title: '별빛 사수', role: '원거리', hp: 95, speed: 148, r: 12, weapon: 'bow', price: 0, diff: 1,
     passive: '활 사거리 +15%',
     skill: { id: 'volley', name: '세 갈래 화살', cd: 5, desc: '부채꼴로 화살 3발 · 무기 충전을 쓰지 않아요' },
+    skill2: { id: 'leap', name: '별빛 도약', cd: 8, desc: '바라보는 쪽으로 재빨리 뛰어오르고 활 충전 +2' },
     sup: { id: 'rain', name: '별똥비', desc: '가장 가까운 적 자리에 2초 동안 넓은 화살비 · 맞으면 느려짐' } },
   bau: { name: '바우', title: '바위 수호자', role: '탱커', hp: 170, speed: 134, r: 14, weapon: 'hammer', price: 300, diff: 1,
     passive: '받는 피해 −15%',
     skill: { id: 'charge', name: '방패 돌진', cd: 8, desc: '앞으로 돌진해 부딪힌 적에게 피해 14 · 1초 기절' },
+    skill2: { id: 'guard', name: '바위 방패', cd: 11, desc: '3.5초 동안 피해 45를 막는 보호막' },
     sup: { id: 'quake', name: '대지 울림', desc: '주변 적에게 피해 26 · 1.5초 기절 · 건물 피해 ×2' } },
   saessak: { name: '새싹', title: '숲의 치유사', role: '서포터', hp: 105, speed: 148, r: 12, weapon: 'spear', price: 400, diff: 1,
     passive: '3초 동안 맞지 않으면 체력이 차올라요',
     skill: { id: 'heal', name: '치유의 꽃', cd: 9, desc: '나와 주변 아군 체력 +30' },
+    skill2: { id: 'seed', name: '씨앗 덫', cd: 9, desc: '발밑에 숨은 덫을 심어 밟은 적을 1.5초 묶고 피해 10 (최대 2개, 12초)' },
     sup: { id: 'vines', name: '덩굴 감옥', desc: '주변 적을 2초 동안 묶고 피해 12 · 주변 아군 체력 +40' } },
   iseul: { name: '이슬', title: '물결 마법사', role: '마법사', hp: 92, speed: 146, r: 12, weapon: 'balloon', price: 500, diff: 3,
     passive: '물풍선 범위 +25%',
     skill: { id: 'bolt', name: '물보라 탄', cd: 4.5, desc: '빠른 물방울 탄 · 맞으면 터져 주변에 피해 16 · 느려짐' },
+    skill2: { id: 'mist', name: '물안개', cd: 12, desc: '4초 동안 안개를 만들어 안의 아군은 숨기고 적은 느리게' },
     sup: { id: 'pool', name: '소용돌이', desc: '가장 가까운 적 자리에 2.5초 동안 적을 끌어당기는 소용돌이' } },
   duri: { name: '두리', title: '꼬마 공병', role: '공성', hp: 125, speed: 144, r: 12, weapon: 'axe', price: 600, diff: 2,
     passive: '건물 피해 +25% · 성벽·망루 나무 −2',
     skill: { id: 'turret', name: '미니 포탑', cd: 12, desc: '앞에 10초 동안 스스로 쏘는 포탑을 세워요' },
+    skill2: { id: 'repair', name: '수리 망치', cd: 10, desc: '주변 우리 성·성벽·망루 체력 +45 · 내 체력 +15' },
     sup: { id: 'bomb', name: '공성 폭약', desc: '폭약을 던져 넓은 범위 피해 30 · 건물 피해 ×3' } },
 };
 const H_ORDER = ['haram', 'byeol', 'bau', 'saessak', 'iseul', 'duri'];
@@ -2982,7 +2990,7 @@ function blankState(mode, map) {
     flow: {}, flowT: 0, flowDirty: true, nearby: null, player: null,
     cam: { x: WW / 2 - 400, y: WH / 2 - 300 }, hudT: 0, miniT: 0,
     terrain: renderTerrain(map), props: map.props || [], propSet: new Set((map.props || []).map(p => p.ty * MW + p.tx)),
-    areas: [], clouds: mkClouds(), amb: [], shakeT: 0, golem: null, golemT: 0, rankBoost: 1,
+    areas: [], traps: [], clouds: mkClouds(), amb: [], shakeT: 0, golem: null, golemT: 0, rankBoost: 1,
   };
 }
 const tileAt = (tx, ty) => (tx < 0 || ty < 0 || tx >= MW || ty >= MH) ? T.ROCK : G.tiles[ty * MW + tx];
@@ -3013,7 +3021,7 @@ function removeStruct(s) {
 }
 function mkUnit(o) {
   return Object.assign({ id: ++G.uid, x: 0, y: 0, r: 12, hp: 100, maxHp: 100, speed: 140, fx: 1, fy: 0, weapon: 'fist', owned: new Set(['fist']), charges: {}, cd: 0, dead: false, respawn: 0, slow: 0, flash: 0, swing: 0, kind: 'ai', team: null, name: '', ai: null, atk: 0, walk: 0, eatCd: 0,
-    hero: null, lv: 1, lvMul: 1, armor: 1, sup: 0, scd: 0, stun: 0, root: 0, cast: 0, revealT: -9, hurtT: -9, movedT: -9, dash: null, whirl: 0, whirlT: 0 }, o);
+    hero: null, lv: 1, lvMul: 1, armor: 1, sup: 0, scd: 0, stun: 0, root: 0, cast: 0, revealT: -9, hurtT: -9, movedT: -9, dash: null, whirl: 0, whirlT: 0, scd2: 0, shield: 0, shieldT: 0 }, o);
 }
 function newAI(role) { return { role, answering: 0, answerFor: null, node: null, field: null, fieldKey: '', tu: null, think: 0, wait: 0, stuck: 0, lx: 0, ly: 0, retarget: 0 }; }
 function skill() {
@@ -3246,17 +3254,23 @@ function hit(tgt, src, dmg, castleMul, slow, fromSup) {
     return;
   }
   if (tgt.dead) return;
-  const d = dmg * k * (tgt.armor || 1);
+  let d = dmg * k * (tgt.armor || 1);
   if (tgt === G.player) { damagePlayer(d, src); }
-  else { tgt.hp -= d; tgt.flash = .15; if (onScreen(tgt.x, tgt.y) && seenBy(tgt, viewTeam())) fxText(tgt.x, tgt.y - 30, '−' + Math.round(d), src === G.player ? '#ffe08a' : '#fff'); }
+  else { const d0 = d; d = absorb(tgt, d); if (d <= 0 && d0 > 0) { tgt.hurtT = G.time; return; } tgt.hp -= d; tgt.flash = .15; if (onScreen(tgt.x, tgt.y) && seenBy(tgt, viewTeam())) fxText(tgt.x, tgt.y - 30, '−' + Math.round(d), src === G.player ? '#ffe08a' : '#fff'); }
   tgt.hurtT = G.time; tgt.revealT = G.time + 1;
   if (slow) tgt.slow = Math.max(tgt.slow, slow);
   if (src) { src.revealT = G.time + 1; if (!fromSup) gainSup(src, d * .8); const dx = tgt.x - src.x, dy = tgt.y - src.y, l = Math.hypot(dx, dy) || 1; if (tgt.kind !== 'golem') tryMove(tgt, dx / l * 6, dy / l * 6); }
   if (src === G.player) sfx('hit');
   if (tgt !== G.player && tgt.hp <= 0 && !tgt.dead) kill(tgt, src);
 }
+function absorb(u, d) {
+  if (!(u.shield > 0) || d <= 0) return d;
+  const a = Math.min(u.shield, d); u.shield -= a; if (onScreen(u.x, u.y)) fxText(u.x + 14, u.y - 20, '막음 ' + Math.round(a), '#9fd3ff');
+  return d - a;
+}
 function damagePlayer(d, src) {
   const p = G.player; if (p.dead) return;
+  d = absorb(p, d); if (d <= 0) { p.hurtT = G.time; return; }
   p.hp -= d; p.flash = .2; p.hurtT = G.time; fxText(p.x, p.y - 30, '−' + Math.round(d), '#ff8a80');
   if (p.hp <= 0) {
     if (G.mode === 'survival') { p.hp = 0; kill(p, src); endGame(false, '체력이 모두 떨어졌어요'); }
@@ -3284,7 +3298,7 @@ function kill(u, src) {
 }
 function respawn(u) {
   const k = G.teams[u.team].keep; if (!k || !k.alive) { u.respawn = Infinity; return; }
-  const sp = spawnPoint(u.team, Math.floor(Math.random() * 3)); u.x = sp.x; u.y = sp.y; u.dead = false; u.hp = u.maxHp; u.slow = 0; u.stun = 0; u.root = 0; u.dash = null; u.whirl = 0; u.revealT = -9;
+  const sp = spawnPoint(u.team, Math.floor(Math.random() * 3)); u.x = sp.x; u.y = sp.y; u.dead = false; u.hp = u.maxHp; u.slow = 0; u.stun = 0; u.root = 0; u.dash = null; u.whirl = 0; u.revealT = -9; u.shield = 0;
   if (u === G.player) toast('부활했어요', 'good');
 }
 function destroyStruct(s, src) {
@@ -3300,7 +3314,8 @@ function updateProj(dt) {
     if (p.kind === 'arrow') {
       p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt;
       let done = p.life <= 0;
-      if (!done) for (const e of G.units) { if (e.dead || e.team === p.team) continue; if (Math.hypot(e.x - p.x, e.y - p.y) < e.r + 4) { if (!p.bolt) hit(e, p.src, p.dmg, 1, 0, p.sup); done = true; break; } }
+      if (!done && p.pierce) { for (const e of G.units) { if (e.dead || e.team === p.team || p.hitSet.has(e)) continue; if (Math.hypot(e.x - p.x, e.y - p.y) < e.r + 12) { p.hitSet.add(e); hit(e, p.src, p.dmg, 1, 0, p.sup); } } }
+      else if (!done) for (const e of G.units) { if (e.dead || e.team === p.team) continue; if (Math.hypot(e.x - p.x, e.y - p.y) < e.r + 4) { if (!p.bolt) hit(e, p.src, p.dmg, 1, 0, p.sup); done = true; break; } }
       if (!done) {
         const tx = Math.floor(p.x / TILE), ty = Math.floor(p.y / TILE); const s = (tx >= 0 && ty >= 0 && tx < MW && ty < MH) ? G.occ[ty * MW + tx] : null;
         if (s && s.team !== p.team) { if (!p.bolt) hit(s, p.src, p.dmg, p.castle, 0, p.sup); done = true; }
@@ -3336,9 +3351,14 @@ function updateTowers(dt) {
 
 /* ---------- 수풀 · 시야 ---------- */
 const inBush = u => tileAt(Math.floor(u.x / TILE), Math.floor(u.y / TILE)) === T.BUSH;
+function inCover(u) {
+  if (inBush(u)) return true;
+  for (const a of G.areas) if (a.kind === 'mist' && a.team === u.team && Math.hypot(u.x - a.x, u.y - a.y) < a.r) return true;
+  return false;
+}
 function seenBy(u, team) {
   if (!u || u.dead) return false;
-  if (u.team === team || u.revealT > G.time || !inBush(u)) return true;
+  if (u.team === team || u.revealT > G.time || !inCover(u)) return true;
   for (const o of G.units) if (!o.dead && o.team === team && (o.x - u.x) * (o.x - u.x) + (o.y - u.y) * (o.y - u.y) < 8100) return true;
   return false;
 }
@@ -3387,11 +3407,34 @@ function placeTurret(u) {
   fxPoof((tx + .5) * TILE, (ty + .5) * TILE, '#e7c25b', 8);
   return true;
 }
-function useSkill(u) {
-  const h = HERO(u); if (!h || !canAct(u) || u.scd > 0) return false;
-  const id = h.skill.id;
-  const t = id === 'heal' ? null : aimAt(u, id === 'dash' || id === 'charge' ? 230 : 360, id !== 'volley' && id !== 'bolt');
+function useSkill(u, slot = 1) {
+  const h = HERO(u), cdKey = slot === 2 ? 'scd2' : 'scd'; if (!h || !canAct(u) || u[cdKey] > 0) return false;
+  const sk = slot === 2 ? h.skill2 : h.skill, id = sk.id;
+  const aims = ['dash', 'charge', 'volley', 'bolt', 'turret', 'wind'];
+  const t = aims.includes(id) ? aimAt(u, id === 'dash' || id === 'charge' ? 230 : id === 'wind' ? 300 : 360, id !== 'volley' && id !== 'bolt' && id !== 'wind') : null;
   if (t) faceTo(u, tgtPos(t));
+  if (slot === 2) {
+    if (id === 'wind') G.proj.push({ kind: 'arrow', wave: true, pierce: true, hitSet: new Set(), x: u.x + u.fx * 16, y: u.y + u.fy * 16, vx: u.fx * 480, vy: u.fy * 480, life: .6, team: u.team, src: u, dmg: 15, castle: .6 });
+    else if (id === 'leap') {
+      let vx = u.fx, vy = u.fy;
+      if (u.ai) { const e = aimAt(u, 260, false); if (e) { const dx = u.x - e.x, dy = u.y - e.y, l = Math.hypot(dx, dy) || 1; vx = dx / l; vy = dy / l; } }
+      u.dash = { t: .2, sp: 600, dmg: 0, stun: 0, pass: true, noHit: true, hit: new Set(), vx, vy };
+      if (u.owned.has('bow')) u.charges.bow = Math.min(WEAPONS.bow.max, (u.charges.bow || 0) + 2);
+    } else if (id === 'guard') { u.shield = Math.round(45 * (u.lvMul || 1)); u.shieldT = 3.5; G.fx.push({ kind: 'ring', x: u.x, y: u.y, t: 0, life: .5, r: 40, color: '#9fd3ff' }); }
+    else if (id === 'seed') {
+      const mine = G.traps.filter(tr => tr.src === u); if (mine.length >= 2) G.traps = G.traps.filter(tr => tr !== mine[0]);
+      G.traps.push({ x: u.x, y: u.y + 6, team: u.team, src: u, t: 0, life: 12, armed: .5 });
+    } else if (id === 'mist') G.areas.push({ kind: 'mist', x: u.x, y: u.y, r: 95, t: 0, dur: 4, tick: 0, team: u.team, src: u });
+    else if (id === 'repair') {
+      let n = 0;
+      for (const s of G.structs) if (s.alive && s.team === u.team && SDEF[s.type].block && rectDist(u, s) < 130 && s.hp < s.maxHp) { const add = Math.min(45, s.maxHp - s.hp); s.hp += add; n++; const c = sCenter(s); fxText(c.x, c.y - s.th * 16, '+' + Math.round(add), '#ffd36e'); }
+      u.hp = Math.min(u.maxHp, u.hp + 15); G.fx.push({ kind: 'ring', x: u.x, y: u.y, t: 0, life: .6, r: 130, color: '#f2c230' });
+      if (u === G.player && !n) toast('주변에 고칠 건물이 없어 체력만 회복했어요');
+    }
+    u.scd2 = sk.cd; u.revealT = G.time + (id === 'mist' || id === 'seed' ? 0 : 1); u.cast = .25; G.casts = (G.casts || 0) + 1;
+    if (u === G.player) sfx('skill');
+    return true;
+  }
   if (id === 'dash' || id === 'charge') u.dash = { t: id === 'dash' ? .24 : .34, sp: id === 'dash' ? 660 : 520, dmg: id === 'dash' ? 18 : 14, stun: id === 'charge' ? 1 : 0, pass: id === 'dash', hit: new Set(), vx: u.fx, vy: u.fy };
   else if (id === 'volley') { const a0 = Math.atan2(u.fy, u.fx); for (const da of [-.2, 0, .2]) { const a = a0 + da; G.proj.push({ kind: 'arrow', star: true, x: u.x + Math.cos(a) * 14, y: u.y + Math.sin(a) * 14, vx: Math.cos(a) * 540, vy: Math.sin(a) * 540, life: .66, team: u.team, src: u, dmg: 12, castle: .7 }); } }
   else if (id === 'bolt') G.proj.push({ kind: 'arrow', bolt: true, x: u.x + u.fx * 14, y: u.y + u.fy * 14, vx: u.fx * 560, vy: u.fy * 560, life: .62, team: u.team, src: u, dmg: 16, castle: 1, splash: 58, slow: 1.6 });
@@ -3436,11 +3479,12 @@ function splashAt(x, y, r, team, src, dmg, castle, slow, sup) {
 function updateAbilities(dt) {
   for (const u of G.units) {
     if (u.dead) { u.dash = null; u.whirl = 0; continue; }
-    u.scd = Math.max(0, u.scd - dt); u.cast = Math.max(0, u.cast - dt); u.stun = Math.max(0, u.stun - dt); u.root = Math.max(0, u.root - dt);
+    u.scd = Math.max(0, u.scd - dt); u.scd2 = Math.max(0, (u.scd2 || 0) - dt); u.cast = Math.max(0, u.cast - dt);
+    if (u.shieldT > 0) { u.shieldT -= dt; if (u.shieldT <= 0) u.shield = 0; } u.stun = Math.max(0, u.stun - dt); u.root = Math.max(0, u.root - dt);
     if (u.dash) {
       const D = u.dash, step = D.sp * dt, bx = u.x, by = u.y; D.t -= dt;
       tryMove(u, D.vx * step, D.vy * step); u.walk += step; u.movedT = G.time;
-      for (const e of G.units) {
+      if (!D.noHit) for (const e of G.units) {
         if (e.dead || e.team === u.team || D.hit.has(e) || Math.hypot(e.x - u.x, e.y - u.y) > u.r + e.r + 6) continue;
         D.hit.add(e); hit(e, u, D.dmg, 1, 0);
         if (D.stun && e.kind !== 'golem') e.stun = Math.max(e.stun, D.stun);
@@ -3448,7 +3492,7 @@ function updateAbilities(dt) {
       }
       if (Math.hypot(u.x - bx, u.y - by) < step * .3) {
         const s = G.occ[Math.floor((u.y + D.vy * (u.r + 8)) / TILE) * MW + Math.floor((u.x + D.vx * (u.r + 8)) / TILE)];
-        if (s && s.team && s.team !== u.team) hit(s, u, D.dmg, 1.5, 0);
+        if (s && s.team && s.team !== u.team && !D.noHit) hit(s, u, D.dmg, 1.5, 0);
         D.t = 0;
       }
       if (onScreen(u.x, u.y)) G.fx.push({ kind: 'trail', x: u.x, y: u.y, t: 0, life: .22, color: TEAM_COLOR[u.team] });
@@ -3460,8 +3504,18 @@ function updateAbilities(dt) {
     }
     if (u.hero === 'saessak' && G.time - u.hurtT > 3 && u.hp < u.maxHp) u.hp = Math.min(u.maxHp, u.hp + 4 * dt);
   }
+  for (const tr of G.traps) {
+    tr.t += dt; if (tr.t < tr.armed) continue;
+    for (const e of G.units) {
+      if (e.dead || e.team === tr.team || Math.hypot(e.x - tr.x, e.y - tr.y) > e.r + 16) continue;
+      hit(e, tr.src, 10, 1, 0); if (e.kind !== 'golem') e.root = Math.max(e.root, 1.5);
+      G.fx.push({ kind: 'vines', x: tr.x, y: tr.y - 6, t: 0, life: .7, r: 40 }); tr.life = 0; break;
+    }
+  }
+  G.traps = G.traps.filter(tr => tr.t < tr.life && !(tr.src && tr.src.dead && G.mode !== 'battle'));
   for (const a of G.areas) {
     a.t += dt; a.tick -= dt;
+    if (a.kind === 'mist') { if (a.tick <= 0) { a.tick = .25; for (const e of G.units) if (!e.dead && e.team !== a.team && Math.hypot(e.x - a.x, e.y - a.y) < a.r + e.r) e.slow = Math.max(e.slow, .45); } continue; }
     if (a.tick <= 0) {
       a.tick = a.kind === 'rain' ? .2 : .25;
       for (const e of G.units) { if (e.dead || e.team === a.team || Math.hypot(e.x - a.x, e.y - a.y) > a.r + e.r) continue; hit(e, a.src, a.kind === 'rain' ? 7 : 6, 1, a.kind === 'rain' ? .5 : .6, true); }
@@ -3489,6 +3543,12 @@ function aiAbilities(u) {
     const want = id === 'heal' ? G.units.some(a => !a.dead && a.team === u.team && a.hp < a.maxHp * .6 && dist(a, u) < 125)
       : id === 'dash' || id === 'charge' ? d < 170 : id === 'turret' ? d < 230 || kd < 130 : d < 330;
     if (want && Math.random() < .6) useSkill(u);
+  }
+  if ((u.scd2 || 0) <= 0 && h.skill2) {
+    const id = h.skill2.id;
+    const want = id === 'wind' ? d < 260 : id === 'leap' ? d < 110 : id === 'guard' ? d < 150 && u.hp < u.maxHp * .9 : id === 'seed' ? d < 220
+      : id === 'mist' ? d < 200 && u.hp < u.maxHp * .6 : G.structs.some(s => s.alive && s.team === u.team && SDEF[s.type].block && s.hp < s.maxHp * .8 && rectDist(u, s) < 130);
+    if (want && Math.random() < .6) useSkill(u, 2);
   }
   if (u.sup >= 100) {
     const id = h.sup.id;
@@ -4140,7 +4200,8 @@ addEventListener('keydown', e => {
   if (G.paused) return;
   if (/^(Arrow|Key[WASD])/.test(k) || k === 'Space') e.preventDefault();
   if (e.repeat && k !== 'KeyF' && k !== 'Space') { keys.add(k); return; }
-  if (k === 'KeyQ') { playerSkill(); return; }
+  if (k === 'KeyQ') { playerSkill(1); return; }
+  if (k === 'KeyC') { playerSkill(2); return; }
   if (k === 'KeyR') { playerSuper(); return; }
   keys.add(k);
   if (k === 'KeyE') interact();
@@ -4174,7 +4235,7 @@ function initTouch() {
     b.addEventListener('pointerdown', e => {
       e.preventDefault(); if (!G || G.modal || G.paused || G.over) return;
       if (act === 'attack') { atkHeld = true; playerAttackPress(); }
-      else if (act === 'skill') playerSkill(); else if (act === 'super') playerSuper();
+      else if (act === 'skill') playerSkill(1); else if (act === 'skill2') playerSkill(2); else if (act === 'super') playerSuper();
       else if (act === 'interact') interact(); else if (act === 'cycle') cycleWeapon(); else if (act === 'craft') openCraft(); else if (act === 'eat') eat(); else if (act === 'drink') drink();
     });
     if (act === 'attack') { const up = () => { atkHeld = false; }; b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('pointerleave', up); }
@@ -4522,6 +4583,7 @@ function drawUnitBody(u, alpha) {
   drawChar(ctx, { hero: u.hero || 'haram', team: u.team, fx: u.fx, fy: u.fy, walk: u.walk, moving: G.time - (u.movedT || -9) < .12, flash: u.flash > 0, t: G.time + u.id * .7, cast: u.cast > 0 });
   ctx.restore();
   if (!back) drawWeapon(u, u.weapon);
+  if (u.shield > 0) { ctx.fillStyle = 'rgba(159,211,255,.16)'; ctx.strokeStyle = `rgba(159,211,255,${.6 + Math.sin(G.time * 8) * .2})`; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(u.x, u.y - 6, 22, 26, 0, 0, 7); ctx.fill(); ctx.stroke(); }
   if (u.root > 0) { ctx.strokeStyle = '#4f8a3a'; ctx.lineWidth = 3; for (let i = 0; i < 3; i++) { const a = i * 2.1 + G.time; ctx.beginPath(); ctx.moveTo(u.x + Math.cos(a) * 14, u.y + 12); ctx.quadraticCurveTo(u.x + Math.cos(a) * 18, u.y, u.x + Math.cos(a + .6) * 10, u.y - 6); ctx.stroke(); } }
   ctx.restore();
 }
@@ -4597,6 +4659,23 @@ function drawBushRow(row) {
   ctx.drawImage(B, sx, sy, sw, sh, sx, sy, sw, sh);
 }
 function mkClouds() { const a = []; for (let i = 0; i < 4; i++) a.push({ x: Math.random() * WW, y: Math.random() * WH, r: 160 + Math.random() * 140, vx: 8 + Math.random() * 8 }); return a; }
+function drawTraps() {
+  const VT = viewTeam();
+  for (const tr of G.traps) {
+    if (tr.team !== VT || !onScreen(tr.x, tr.y)) continue;
+    const k = Math.min(1, tr.t / tr.armed);
+    ctx.strokeStyle = 'rgba(93,203,142,.5)'; ctx.lineWidth = 1.5; ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.ellipse(tr.x, tr.y, 16, 7, 0, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#7a5230'; ctx.beginPath(); ctx.ellipse(tr.x, tr.y, 4, 2.6, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = '#5dcb8e'; ctx.beginPath(); ctx.ellipse(tr.x - 3, tr.y - 3 * k, 3.4, 1.6, -.6, 0, 7); ctx.ellipse(tr.x + 3, tr.y - 3.5 * k, 3.4, 1.6, .6, 0, 7); ctx.fill();
+  }
+}
+function drawMist() {
+  for (const a of G.areas) {
+    if (a.kind !== 'mist' || !onScreen(a.x, a.y, a.r)) continue;
+    const fade = Math.min(1, a.t * 4, (a.dur - a.t) * 2);
+    for (let i = 0; i < 7; i++) { const ang = i * .9 + a.t * .4, rr = i ? a.r * .55 : 0, x = a.x + Math.cos(ang) * rr, y = a.y + Math.sin(ang) * rr * .7; const g = ctx.createRadialGradient(x, y, 0, x, y, a.r * .6); g.addColorStop(0, `rgba(225,240,250,${.32 * fade})`); g.addColorStop(1, 'rgba(225,240,250,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, a.r * .6, 0, 7); ctx.fill(); }
+  }
+}
 function drawAreas() {
   for (const a of G.areas) {
     const k = a.t / a.dur, fade = Math.min(1, (a.dur - a.t) * 3);
@@ -4646,7 +4725,7 @@ function render(dt) {
   ctx.setTransform(z, 0, 0, z, -cx * z, -cy * z);
   const sx = Math.max(0, G.cam.x), sy = Math.max(0, G.cam.y), sw = Math.min(WW - sx, viewW() + 2), sh = Math.min(WH - sy, viewH() + 2);
   if (sw > 0 && sh > 0) ctx.drawImage(G.terrain.big, sx, sy, sw, sh, sx, sy, sw, sh);
-  drawWaterShimmer(); drawZones(); drawAreas();
+  drawWaterShimmer(); drawZones(); drawAreas(); drawTraps();
   const VT = viewTeam(), list = [], shown = [], ghosts = [];
   for (const r of G.res) if (onScreen(r.x, r.y)) list.push({ y: r.y + 10, d: () => drawRes(r) });
   for (const s of G.structs) { const c = sCenter(s); if (onScreen(c.x, c.y, 260)) list.push({ y: (s.ty + s.th) * TILE - (s.type === 'shelter' || s.type === 'campfire' ? 40 : 0), d: () => drawStruct(s) }); }
@@ -4655,7 +4734,7 @@ function render(dt) {
     if (u.dead || !onScreen(u.x, u.y)) continue;
     if (!seenBy(u, VT)) continue;
     shown.push(u); list.push({ y: u.y + 12, d: () => drawUnitBody(u, 1) });
-    if (inBush(u)) ghosts.push(u);
+    if (inCover(u)) ghosts.push(u);
   }
   const vx0 = G.cam.x - 40, vx1 = G.cam.x + viewW() + 40, vy0 = G.cam.y - 60, vy1 = G.cam.y + viewH() + 60;
   for (const row of G.terrain.bushRows) { if ((row.ty + 1) * TILE < vy0 || row.ty * TILE > vy1 || row.x1 * TILE < vx0 || row.x0 * TILE > vx1) continue; list.push({ y: (row.ty + 1) * TILE + 12.5, d: () => drawBushRow(row) }); }
@@ -4669,7 +4748,8 @@ function render(dt) {
   for (const p of G.proj) {
     if (p.kind === 'arrow') {
       const l = Math.hypot(p.vx, p.vy) || 1, ux = p.vx / l, uy = p.vy / l;
-      if (p.bolt) { ctx.fillStyle = 'rgba(127,208,245,.35)'; ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, 7); ctx.fill(); ctx.fillStyle = '#bfe9fb'; ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, 7); ctx.fill(); }
+      if (p.wave) { const a = Math.atan2(p.vy, p.vx); ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(a); ctx.strokeStyle = 'rgba(230,248,255,.95)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(-8, 0, 16, -1.1, 1.1); ctx.stroke(); ctx.strokeStyle = 'rgba(160,220,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(-16, 0, 14, -1, 1); ctx.stroke(); ctx.restore(); }
+      else if (p.bolt) { ctx.fillStyle = 'rgba(127,208,245,.35)'; ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, 7); ctx.fill(); ctx.fillStyle = '#bfe9fb'; ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, 7); ctx.fill(); }
       else if (p.bullet) { ctx.fillStyle = '#ffd36e'; ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, 7); ctx.fill(); }
       else { ctx.strokeStyle = p.star ? '#ffe08a' : '#f3e6c4'; ctx.lineWidth = p.star ? 2.6 : 2; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - ux * 14, p.y - uy * 14); ctx.stroke(); if (p.star) { ctx.fillStyle = '#fff6c8'; starPath(ctx, p.x, p.y, 3.5, 1.5); ctx.fill(); } }
     } else {
@@ -4678,7 +4758,7 @@ function render(dt) {
       else { ctx.fillStyle = '#5bb3e6'; ctx.beginPath(); ctx.arc(p.x, p.y - hgt, 6.5, 0, 7); ctx.fill(); }
     }
   }
-  drawFx();
+  drawFx(); drawMist();
   for (const u of shown) {
     if (u.swing <= 0 || !u.weapon || WEAPONS[u.weapon].kind !== 'melee') continue;
     const a = Math.atan2(u.fy, u.fx), R = rangeOf(u) + 6;
@@ -4871,7 +4951,8 @@ function renderHeroInfo() {
   main.innerHTML = `<div class="hi-head"><b>${esc(h.name)}</b><span class="role" style="--rc:${ROLE_COLOR[h.role]}">${esc(h.role)}</span>${own ? `<span class="lv">Lv.${lv}</span>` : '<span class="lv lock">잠김</span>'}</div>
     <p class="hi-title">${esc(h.title)} · 기본 무기 ${esc(WEAPONS[h.weapon].name)} · 조작 ${'★'.repeat(h.diff)}${'☆'.repeat(3 - h.diff)}</p>
     <div class="hi-stats">${st('체력', h.hp * m, 180, Math.round(h.hp * m))}${st('속도', h.speed - 110, 50, h.speed)}</div>
-    <dl class="hi-skills"><dt><kbd>Q</kbd> ${esc(h.skill.name)} <small>${h.skill.cd}초</small></dt><dd>${esc(h.skill.desc)}</dd>
+    <dl class="hi-skills"><dt><kbd>Q</kbd> ${esc(h.skill.name)} <small>기술 1 · ${h.skill.cd}초</small></dt><dd>${esc(h.skill.desc)}</dd>
+    <dt><kbd>C</kbd> ${esc(h.skill2.name)} <small>기술 2 · ${h.skill2.cd}초</small></dt><dd>${esc(h.skill2.desc)}</dd>
     <dt><kbd>R</kbd> ${esc(h.sup.name)} <small>필살기</small></dt><dd>${esc(h.sup.desc)} · 적을 맞히거나 문제를 맞히면 게이지가 차요</dd>
     <dt>패시브</dt><dd>${esc(h.passive)}</dd></dl>
     <div class="hi-act">${act}</div>`;
@@ -4901,12 +4982,12 @@ function animSetup(t) {
 const abilIcon = {};
 function buildAbil() {
   const p = G.player, h = HERO(p); if (!h) return;
-  for (const [sel, kind] of [['#aSkill', 'skill'], ['#aSuper', 'sup']]) {
-    const b = $(sel); b.querySelector('.an').textContent = h[kind].name; b.setAttribute('aria-label', `${kind === 'skill' ? '스킬' : '필살기'} ${h[kind].name}`);
+  for (const [sel, kind, fx, fy] of [['#aSkill', 'skill', .9, .2], ['#aSkill2', 'skill2', -.9, .2], ['#aSuper', 'sup', .2, .9]]) {
+    const b = $(sel); b.querySelector('.an').textContent = h[kind].name; b.setAttribute('aria-label', `${kind === 'sup' ? '필살기' : '기술'} ${h[kind].name}`);
     const old = b.querySelector('canvas'); if (old) old.remove();
-    const c = heroCanvas(p.hero, 40, p.team, { fx: kind === 'skill' ? .9 : .2, fy: kind === 'skill' ? .2 : .9 }); b.insertBefore(c, b.firstChild);
+    const c = heroCanvas(p.hero, 40, p.team, { fx, fy }); b.insertBefore(c, b.firstChild);
   }
-  $('#tSkill').textContent = '스킬'; $('#tSuper').textContent = '필살';
+  $('#tSkill').textContent = '기술1'; $('#tSkill2').textContent = '기술2'; $('#tSuper').textContent = '필살';
   const pc = $('#hPort'); paintHero(pc, p.hero, p.team, {});
   $('#hHero').textContent = `${h.name} Lv.${p.lv} · ${h.role}`;
 }
@@ -4914,6 +4995,8 @@ function updateAbilHud() {
   const p = G.player, h = HERO(p); if (!h) return;
   const sk = p.scd > 0 ? p.scd / h.skill.cd : 0;
   for (const b of [$('#aSkill'), $('#tSkill')]) { b.style.setProperty('--cd', sk.toFixed(3)); b.classList.toggle('cool', p.scd > 0); b.dataset.t = p.scd > 0 ? Math.ceil(p.scd) : ''; }
+  const sk2 = p.scd2 > 0 ? p.scd2 / h.skill2.cd : 0;
+  for (const b of [$('#aSkill2'), $('#tSkill2')]) { b.style.setProperty('--cd', sk2.toFixed(3)); b.classList.toggle('cool', p.scd2 > 0); b.dataset.t = p.scd2 > 0 ? Math.ceil(p.scd2) : ''; }
   for (const b of [$('#aSuper'), $('#tSuper')]) { b.style.setProperty('--g', (p.sup / 100).toFixed(3)); b.classList.toggle('ready', p.sup >= 100); b.dataset.t = p.sup >= 100 ? '' : Math.floor(p.sup) + '%'; }
   const bl = $('#buffLine'), my = G.teams[p.team], en = G.mode === 'battle' ? G.teams[other(p.team)] : null;
   let txt = '';
@@ -4922,7 +5005,13 @@ function updateAbilHud() {
   else if (G.mode === 'battle' && G.phase === 'battle') txt = G.golem && !G.golem.dead ? '강 가운데 수호 골렘 · 처치하면 팀 강화' : G.golemT > 0 ? `골렘 부활까지 ${Math.ceil(G.golemT)}초` : '';
   if (bl.textContent !== txt) bl.textContent = txt; bl.hidden = !txt;
 }
-function playerSkill() { const p = G && G.player; if (!p || p.dead || G.modal || G.over || G.paused) return; if (p.stun > 0) return toast('기절해서 움직일 수 없어요'); if (p.scd > 0) return toast(`${HERO(p).skill.name} · ${Math.ceil(p.scd)}초 뒤에 쓸 수 있어요`); useSkill(p); }
+function playerSkill(slot = 1) {
+  const p = G && G.player; if (!p || p.dead || G.modal || G.over || G.paused) return;
+  if (p.stun > 0) return toast('기절해서 움직일 수 없어요');
+  const cd = slot === 2 ? p.scd2 : p.scd, sk = slot === 2 ? HERO(p).skill2 : HERO(p).skill;
+  if (cd > 0) return toast(`${sk.name} · ${Math.ceil(cd)}초 뒤에 쓸 수 있어요`);
+  useSkill(p, slot);
+}
 function playerSuper() { const p = G && G.player; if (!p || p.dead || G.modal || G.over || G.paused) return; if (p.sup < 100) return toast(`필살기 게이지 ${Math.floor(p.sup)}% · 적을 맞히거나 문제를 맞히면 차요`); useSuper(p); }
 
 /* ---------- 결과 보상 ---------- */
@@ -5108,7 +5197,7 @@ function init() {
   $$('input[name="mode"]').forEach(r => r.addEventListener('change', modeUI));
   $$('input[name="grade"], input[name="subject"]').forEach(r => r.addEventListener('change', renderUnits));
   $$('input[name="team"]').forEach(r => r.addEventListener('change', renderHeroes));
-  $('#aSkill').addEventListener('click', playerSkill); $('#aSuper').addEventListener('click', playerSuper);
+  $('#aSkill').addEventListener('click', () => playerSkill(1)); $('#aSkill2').addEventListener('click', () => playerSkill(2)); $('#aSuper').addEventListener('click', playerSuper);
   $('#btnHelp1').addEventListener('click', () => openHelp('#btnHelp1'));
   $('#helpClose').addEventListener('click', closeHelp);
   $('#qCancel').addEventListener('click', cancelQuiz);
