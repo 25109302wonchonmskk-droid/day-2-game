@@ -242,6 +242,23 @@ body.touch #log{display:none}
 .choices.ox .choice kbd{position:absolute;top:8px;left:8px}
 .choices.ox .choice{position:relative}
 .q-ask{margin:-6px 0 0;font-size:13px;color:var(--ink-dim)}
+#quiz.live{background:linear-gradient(to top,rgba(7,16,13,.55),rgba(7,16,13,0) 55%);align-items:flex-end;pointer-events:none}
+#quiz.live .quiz{pointer-events:auto;gap:12px;padding-top:16px;padding-bottom:16px;background:color-mix(in srgb,var(--panel) 94%,transparent)}
+#quiz.live .q-text{font-size:clamp(17px,4.2vw,21px)}
+#quiz.live .choice{min-height:48px}
+#quiz.live .choices.ox .choice{min-height:84px}
+.q-live{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:8px 12px;border-radius:10px;border:1px solid #4a7fa8;background:rgba(80,140,200,.14);font-size:13px}
+.q-live b{color:#9fd3ff}
+.q-live em{margin-left:auto;font:500 13px var(--f-mono);font-style:normal;color:var(--ink-dim)}
+.q-live .pips{display:inline-flex;gap:4px}
+.q-live .pips i{width:14px;height:14px;border-radius:50%;border:2px solid #9fd3ff;background:transparent}
+.q-live .pips i.on{background:#9fd3ff;box-shadow:0 0 8px rgba(159,211,255,.8)}
+.q-live.broken{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 14%,transparent)}
+.q-live.broken b{color:var(--danger)}
+.q-live.blocked{animation:qblock .35s ease-out}
+.q-live.hurt{animation:qhurt .4s ease-out}
+@keyframes qblock{0%{box-shadow:0 0 0 0 rgba(159,211,255,.9)}100%{box-shadow:0 0 0 10px rgba(159,211,255,0)}}
+@keyframes qhurt{0%,100%{transform:none}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 .feedback{border-radius:12px;padding:12px 14px;font-size:15px;display:grid;gap:4px}
 .feedback b{font-size:17px}
 .feedback.ok{background:color-mix(in srgb,var(--ok) 18%,var(--panel));border:1px solid var(--ok)}
@@ -572,6 +589,7 @@ body.touch #abil{display:none}
       <div class="q-head"><span class="chip" id="qReason">나무 채집</span><span class="chip ghost" id="qTag">중등 2학년 · 수학</span></div>
       <p class="q-text" id="qText"></p>
       <p class="q-ask" id="qAsk" hidden></p>
+      <div class="q-live" id="qLive" hidden aria-live="polite"></div>
       <div class="choices" id="qChoices"></div>
       <div class="feedback" id="qFeedback" hidden></div>
       <div class="q-foot"><small id="qHint">숫자 키 1–4로 고를 수 있어요</small><span class="row-c"><button type="button" class="btn ghost sm" id="qCancel">취소</button><button type="button" class="btn primary" id="qNext" hidden>계속 <kbd>Enter</kbd></button></span></div>
@@ -615,7 +633,8 @@ body.touch #abil{display:none}
         <dt>수호 골렘</dt><dd>전투가 시작되면 강 가운데 다리에 나타납니다. 쓰러뜨린 팀은 60초 동안 공격력 +20%, 필살기 충전 1.5배.</dd>
         <dt>보상 · 랭크</dt><dd>경기가 끝나면 코인을 받아 새 영웅을 사거나 강화합니다. 성 공략전 결과로 랭크 점수(RP)가 오르내리고, 100 RP마다 한 단계씩 올라갑니다 (아이언 → 브론즈 → 실버 → 골드 → 플래티넘 → 에메랄드 → 다이아몬드 → 마스터 → 그랜드마스터 → 챌린저). 한 번 오른 등급 아래로는 떨어지지 않아요. 기록은 이 기기에 저장됩니다.</dd>
         <dt>생존 모드</dt><dd>내 구역(초록 테두리)에 쉼터를 지으면 주변이 안전 구역이 됩니다. 쉼터가 있는 상태로 3일을 버티면 성공. 동쪽 바위벽은 문제를 풀어 엽니다.</dd>
-        <dt>문제</dt><dd>객관식은 숫자 키 1–4, O·X 문제는 <kbd>O</kbd>/<kbd>1</kbd> 또는 <kbd>X</kbd>/<kbd>2</kbd>로 답합니다. 정답: 보상 · 오답: 체력 −8 (체력은 1 아래로 내려가지 않아요). 문제를 푸는 동안 시간이 멈춥니다.</dd>
+        <dt>문제</dt><dd>객관식은 숫자 키 1–4, O·X 문제는 <kbd>O</kbd>/<kbd>1</kbd> 또는 <kbd>X</kbd>/<kbd>2</kbd>로 답합니다. 정답: 보상 · 오답: 체력 −8 (체력은 1 아래로 내려가지 않아요). 채집 문제를 푸는 동안에는 시간이 멈춥니다.</dd>
+        <dt>무기 충전 문제</dt><dd>무기 충전 문제를 푸는 동안에는 전투가 멈추지 않아요. 그동안 내 캐릭터는 움직일 수 없고, 보호막이 공격을 2번까지만 막아 줍니다. 늦게 풀어 보호막이 깨지면 그다음 공격부터는 그대로 피해를 받아요. AI도 같은 규칙입니다.</dd>
         <dt>단원 고르기</dt><dd>시작 화면에서 학년을 누르면 그 학년의 단원이 나옵니다. 여러 단원을 골라 그 단원 문제만 풀 수 있어요.</dd>
       </dl>
       <div class="row-c"><button type="button" class="btn primary" id="helpClose">닫기</button></div>
@@ -3262,8 +3281,9 @@ function hit(tgt, src, dmg, castleMul, slow, fromSup) {
     return;
   }
   if (tgt.dead) return;
+  if (tgt.ai && tgt.ai.answering > 0 && tgt.ai.guard > 0) { tgt.ai.guard--; tgt.hurtT = G.time; if (onScreen(tgt.x, tgt.y) && seenBy(tgt, viewTeam())) fxText(tgt.x, tgt.y - 36, '막음', '#9fd3ff'); return; }
   let d = dmg * k * (tgt.armor || 1);
-  if (tgt === G.player) { damagePlayer(d, src); }
+  if (tgt === G.player) { if (damagePlayer(d, src) === 'blocked') return; }
   else { const d0 = d; d = absorb(tgt, d); if (d <= 0 && d0 > 0) { tgt.hurtT = G.time; return; } tgt.hp -= d; tgt.flash = .15; if (onScreen(tgt.x, tgt.y) && seenBy(tgt, viewTeam())) fxText(tgt.x, tgt.y - 30, '−' + Math.round(d), src === G.player ? '#ffe08a' : '#fff'); }
   tgt.hurtT = G.time; tgt.revealT = G.time + 1;
   if (slow) tgt.slow = Math.max(tgt.slow, slow);
@@ -3278,9 +3298,14 @@ function absorb(u, d) {
 }
 function damagePlayer(d, src) {
   const p = G.player; if (p.dead) return;
+  if (QZ && QZ.live && G.modal === 'quiz') {
+    if (QZ.guard > 0) { QZ.guard--; p.hurtT = G.time; fxText(p.x, p.y - 36, QZ.guard ? `막음! 남은 보호막 ${QZ.guard}` : '막음! 보호막이 깨졌어요', '#9fd3ff'); G.fx.push({ kind: 'ring', x: p.x, y: p.y - 4, t: 0, life: .4, r: 34, color: '#9fd3ff' }); sfx('hit'); liveFlash('blocked'); return 'blocked'; }
+    QZ.hits++; liveFlash('hurt');
+  }
   d = absorb(p, d); if (d <= 0) { p.hurtT = G.time; return; }
   p.hp -= d; p.flash = .2; p.hurtT = G.time; fxText(p.x, p.y - 30, '−' + Math.round(d), '#ff8a80');
   if (p.hp <= 0) {
+    if (QZ && QZ.live) abortQuiz('문제를 푸는 사이에 쓰러졌어요');
     if (G.mode === 'survival') { p.hp = 0; kill(p, src); endGame(false, '체력이 모두 떨어졌어요'); }
     else kill(p, src);
   }
@@ -3744,7 +3769,7 @@ function playerAttackPress() {
   const p = G.player; if (!p || p.dead || G.modal || G.over) return;
   if (charges(p, p.weapon) <= 0) {
     const w = WEAPONS[p.weapon];
-    askQuestion(`무기 충전 · ${w.name}`, ok => { if (!ok) return null; p.charges[p.weapon] = w.max; updateWeaponBar(); return `${w.name} 충전 ${w.max}회`; });
+    askQuestion(`무기 충전 · ${w.name}`, ok => { if (!ok) return null; p.charges[p.weapon] = w.max; updateWeaponBar(); return `${w.name} 충전 ${w.max}회`; }, { live: true });
     return;
   }
   attack(p);
@@ -3767,7 +3792,7 @@ function updateAI(u, dt) {
   const moved = Math.hypot(u.x - bx, u.y - by);
   if (ai.wantMove && moved < u.speed * dt * .15) { ai.stuck += dt; if (ai.stuck > 1.2) { ai.stuck = 0; ai.node = null; ai.field = null; tryMove(u, rand(-14, 14), rand(-14, 14)); } } else ai.stuck = 0;
 }
-function startAnswer(u, what) { u.ai.answering = rand(1.4, 2.6) * (1.25 - skill() * .4); u.ai.answerFor = what; u.ai.wantMove = false; }
+function startAnswer(u, what) { u.ai.answering = rand(1.4, 2.6) * (1.25 - skill() * .4); u.ai.answerFor = what; u.ai.wantMove = false; u.ai.guard = what.type === 'charge' ? GUARD_HITS : 0; }
 function resolveAI(u) {
   const ai = u.ai, w = ai.answerFor; ai.answerFor = null; if (!w) return;
   const ok = Math.random() < skill();
@@ -3971,11 +3996,13 @@ function nextQuestion() {
   }
   return QB.next(CFG.grade, CFG.subject, CFG.diff, { units: CFG.units, format: CFG.qfmt });
 }
-function askQuestion(reason, cb) {
+const GUARD_HITS = 2;
+function askQuestion(reason, cb, opts = {}) {
   if (G.modal) return;
   const q = nextQuestion();
-  QZ = { q, cb, answered: false };
-  G.modal = 'quiz';
+  QZ = { q, cb, answered: false, live: !!opts.live, guard: opts.live ? GUARD_HITS : 0, t0: G.time, hits: 0 };
+  G.modal = 'quiz'; keys.clear(); atkHeld = false;
+  $('#quiz').classList.toggle('live', QZ.live); $('#qLive').hidden = !QZ.live; $('#qLive').className = 'q-live'; updateLiveQuiz(true);
   $('#qReason').textContent = reason;
   $('#qTag').textContent = q.custom ? `사진 문제 · ${CUSTOM.name || '내 문제'}` : `${GRADE_LABEL[CFG.grade]} · ${SUBJ_LABEL[CFG.subject]} · ${q.unit || DIFF_LABEL[CFG.diff]}`;
   $('#qText').innerHTML = renderMath(q.q);
@@ -3987,7 +4014,7 @@ function askQuestion(reason, cb) {
     else { b.className = 'choice'; b.innerHTML = `<kbd>${i + 1}</kbd><span>${renderMath(c)}</span>`; }
     b.addEventListener('click', () => answer(i)); box.appendChild(b);
   });
-  $('#qHint').textContent = q.ox ? 'O·X 키 또는 1·2로 고를 수 있어요' : '숫자 키 1–4로 고를 수 있어요';
+  $('#qHint').textContent = QZ.live ? '문제를 푸는 동안에도 전투가 계속돼요' : q.ox ? 'O·X 키 또는 1·2로 고를 수 있어요' : '숫자 키 1–4로 고를 수 있어요';
   $('#qFeedback').hidden = true; $('#qNext').hidden = true; $('#qCancel').hidden = false; $('#qHint').hidden = false;
   showOverlay('quiz');
   setTimeout(() => { const card = $('#quiz .quiz'); card && card.focus({ preventScroll: true }); }, 30);
@@ -4020,6 +4047,17 @@ function closeQuiz() {
   $('#quiz').hidden = true; G.modal = null; keys.clear(); updateHud(true);
 }
 function cancelQuiz() { if (!QZ || QZ.answered) return; QZ = null; $('#quiz').hidden = true; G.modal = null; keys.clear(); }
+function abortQuiz(msg) { if (!QZ) return; clearTimeout(QZ.auto); QZ = null; $('#quiz').hidden = true; if (G.modal === 'quiz') G.modal = null; keys.clear(); if (msg) toast(msg, 'bad'); }
+function updateLiveQuiz(force) {
+  if (!QZ || !QZ.live) return;
+  const sec = Math.floor(G.time - QZ.t0), el = $('#qLive');
+  const key = QZ.guard + '|' + sec + '|' + QZ.hits;
+  if (!force && el.dataset.k === key) return; el.dataset.k = key;
+  const pips = Array.from({ length: GUARD_HITS }, (_, i) => `<i class="${i < QZ.guard ? 'on' : ''}"></i>`).join('');
+  el.innerHTML = `<b>전투 진행 중</b><span class="pips" aria-label="보호막 ${QZ.guard}번 남음">${pips}</span><span>${QZ.guard ? `보호막이 공격 ${QZ.guard}번을 더 막아요` : '보호막이 깨졌어요 · 공격을 그대로 받아요'}</span><em>${sec}초</em>`;
+  el.classList.toggle('broken', !QZ.guard);
+}
+function liveFlash(kind) { const el = $('#qLive'); el.classList.remove('blocked', 'hurt'); void el.offsetWidth; el.classList.add(kind); updateLiveQuiz(true); }
 
 /* ---------- 제작 패널 ---------- */
 function iconCanvas(kind, size = 40) {
@@ -4253,7 +4291,7 @@ function initTouch() {
 
 /* ---------- 업데이트 ---------- */
 function updatePlayer(dt) {
-  const p = G.player; if (!p || p.dead) return;
+  const p = G.player; if (!p || p.dead || G.modal) return;
   const v = inputVec();
   if (v.x || v.y) { G.resting = false; steer(p, v.x, v.y, dt); }
   if ((keys.has('KeyF') || keys.has('Space') || atkHeld) && charges(p, p.weapon) > 0) attack(p);
@@ -4291,7 +4329,7 @@ function updateCam(dt) {
   if (G.player) {
     let f = G.player;
     if (f.dead && G.mode === 'battle') { const a = G.units.find(u => u.team === f.team && !u.dead && u !== f); if (a) f = a; }
-    tx = f.x - viewW() / 2; ty = f.y - viewH() / 2;
+    tx = f.x - viewW() / 2; ty = f.y - viewH() / 2 + (QZ && QZ.live ? viewH() * .2 : 0);
     const k = 1 - Math.pow(.0015, dt); G.cam.x = lerp(G.cam.x, tx, k); G.cam.y = lerp(G.cam.y, ty, k);
   } else { const t = performance.now() / 1000; G.cam.x = WW / 2 - viewW() / 2 + Math.sin(t * .05) * (WW / 2 - viewW() / 2 - 20); G.cam.y = WH / 2 - viewH() / 2 + Math.cos(t * .037) * Math.max(0, WH / 2 - viewH() / 2 - 20); }
   G.cam.x = viewW() >= WW ? (WW - viewW()) / 2 : clamp(G.cam.x, 0, WW - viewW());
@@ -4913,7 +4951,9 @@ function goSetup() {
 let last = performance.now();
 function loop(now) {
   const dt = Math.min(.05, (now - last) / 1000); last = now;
-  const running = G && G.player && !G.paused && !G.modal && !G.over && G.phase !== 'preview';
+  const live = G && G.modal === 'quiz' && QZ && QZ.live;
+  const running = G && G.player && !G.paused && (!G.modal || live) && !G.over && G.phase !== 'preview';
+  if (live) updateLiveQuiz();
   if (running) { update(dt); updateFx(dt); } else if (G && G.over) updateFx(dt);
   render(dt); animSetup(now / 1000);
   if (G && G.player) { G.hudT -= dt; if (G.hudT <= 0) { G.hudT = .1; updateHud(); } G.miniT -= dt; if (G.miniT <= 0) { G.miniT = .2; drawMini(); } }
