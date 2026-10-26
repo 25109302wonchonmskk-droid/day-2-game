@@ -1,0 +1,17 @@
+{
+  "name": "3장 머리위 포커",
+  "short_name": "머리위 포커",
+  "description": "나만 보기·공개·머리 위 카드로 하는 2인 인디언 포커. 온라인 대전과 AI 대전.",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#091a1f",
+  "theme_color": "#091a1f",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
